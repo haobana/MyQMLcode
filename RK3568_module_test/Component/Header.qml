@@ -65,7 +65,7 @@ Rectangle {
             source: "qrc:/fonts/DS-DIGI-1.ttf"  // 字体文件路径
         }
         Rectangle {
-            width: 160
+            Layout.preferredWidth: 180
             height: headerroot.height
             color: "transparent"  // 背景色
             Layout.alignment: Qt.AlignRight | Qt.AlignBottom  // 对齐下角
@@ -74,8 +74,7 @@ Rectangle {
 
                 //control button
                 RowLayout {
-                    anchors.right: parent.right
-                    anchors.top: parent.top
+                    Layout.alignment: Qt.AlignRight | Qt.AlignTop
                     spacing: 15  // 按钮之间的间距
                     Button {
                         background: Image {
@@ -114,6 +113,7 @@ Rectangle {
                 //time
                 Text {
                     id: dateTimeLabel
+                    Layout.alignment: Qt.AlignCenter
                     text: getCurrentDateTime()
                     font.family: digitalFont.status === FontLoader.Ready ? "DS-DIGITAL" : "Arial"  // 使用自定义字体
                     font.pixelSize: 50
@@ -142,7 +142,7 @@ Rectangle {
         onTriggered: dateTimeLabel.text = getCurrentDateTime()
     }
 
-    MouseArea{  //设置可以拖动没有标题的登录界面.  /*这个要放在上面，放在最下面的话，会把上面全部屏蔽掉的*/
+    MouseArea {  //设置可以拖动没有标题的登录界面.
         anchors.fill:parent
         property point clickPos: "0,0"  //定义一个点
         z:-1
