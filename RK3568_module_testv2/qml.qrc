@@ -1,0 +1,43 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Resource/icon/weigh.png</file>
+        <file>Resource/icon/ultrasonic.png</file>
+        <file>Resource/icon/uart.png</file>
+        <file>Resource/icon/topeet-logo.png</file>
+        <file>Resource/icon/temandhum.png</file>
+        <file>Resource/icon/steering.png</file>
+        <file>Resource/icon/star.png</file>
+        <file>Resource/icon/sg90.png</file>
+        <file>Resource/icon/RFID.png</file>
+        <file>Resource/icon/relay.png</file>
+        <file>Resource/icon/pcienet.png</file>
+        <file>Resource/icon/oled.png</file>
+        <file>Resource/icon/Lamp.png</file>
+        <file>Resource/icon/keyboard.png</file>
+        <file>Resource/icon/home.png</file>
+        <file>Resource/icon/gps.png</file>
+        <file>Resource/icon/fan.png</file>
+        <file>Resource/icon/attitude.png</file>
+        <file>Resource/srcPage/ledon.png</file>
+        <file>Resource/srcPage/ledoff.png</file>
+        <file>Component/Header.qml</file>
+        <file>Pages/GpsPage.qml</file>
+        <file>Pages/KeyboardPage.qml</file>
+        <file>Pages/LedPage.qml</file>
+        <file>Pages/RfidPage.qml</file>
+        <file>fonts/DS-DIGI-1.ttf</file>
+        <file>fonts/DS-DIGIB-2.ttf</file>
+        <file>fonts/DS-DIGII-3.ttf</file>
+        <file>fonts/DS-DIGIT-4.ttf</file>
+        <file>Resource/control/minimize.png</file>
+        <file>Resource/control/revert.png</file>
+        <file>Resource/control/close.png</file>
+        <file>Resource/control/maxsize.png</file>
+        <file>Resource/icon/dress.png</file>
+        <file>Resource/icon/setting.png</file>
+        <file>Pages/HomePage.qml</file>
+        <file>Resource/srcPage/bk_flower.jpg</file>
+        <file>Resource/icon/help.png</file>
+    </qresource>
+</RCC>
