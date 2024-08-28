@@ -1,28 +1,29 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
+import QtGraphicalEffects 1.0
 import "./Pages"
 import "./Component"
 
 ApplicationWindow {
     id: windowroot
     visible: true
-    minimumHeight: 600
-    minimumWidth: 800
+    minimumHeight: 800
+    minimumWidth: 790
     title: "RK3568_moudle_test"
     visibility: "Maximized"
-    flags: Qt.FramelessWindowHint // 隐藏系统默认的标题栏
+    flags: Qt.FramelessWindowHint | Qt.Window // 隐藏系统默认的标题栏
+    ColorConfig {
+        id: colorConfig
+    }
 
-    // 定义全局颜色属性
-    property color globalColor1: "#00adab"  // 左侧颜色
-    property color globalColor2: "#005974"  // 右侧颜色
-
+    //应用整体布局分为上下
     ColumnLayout {
         anchors.fill: parent
         spacing: 0  // 移除布局之间的间距
 
         // 上半区标题栏
-        Header {}
+        Header {id:header}
 
         //下半区列表和stack
         RowLayout {
@@ -34,23 +35,19 @@ ApplicationWindow {
             Rectangle {
                 id: sidebar
                 visible: true
-                width: 250
+                width: 120
                 Layout.fillHeight: true
-                //color: "darkslategray"  // 与标题栏相同的颜色
-                //border.color: "darkslategray"
-                ShaderEffect {
+                //渐变色
+                LinearGradient {            ///--[Mark]
                     anchors.fill: parent
-                    fragmentShader: "
-                        uniform lowp float qt_Opacity;
-                        varying highp vec2 qt_TexCoord0;
-                        uniform lowp vec4 color1;
-                        uniform lowp vec4 color2;
-                        void main() {
-                            gl_FragColor = mix(color1, color2, qt_TexCoord0.x) * qt_Opacity;
-                        }
-                    "
-                    property color color1: globalColor1  // 左侧颜色
-                    property color color2: globalColor2  // 右侧颜色
+                    start: Qt.point(0, 0)
+                    end: Qt.point(width, 0)        ///1、横向渐变
+            //        end: Qt.point(0, height)     ///2、竖向渐变
+            //        end: Qt.point(width, height) ///3、横向渐变
+                    gradient: Gradient {
+                        GradientStop {  position: 0.0; color: colorConfig.themeColor1 }
+                        GradientStop {  position: 1.0; color: colorConfig.themeColor2 }
+                    }
                 }
                 clip: true
 
@@ -82,8 +79,8 @@ ApplicationWindow {
 
                     delegate: Button {
                         id: btn
-                        width: parent.width
-                        height: 60
+                        width: menuListView.width
+                        height: 100
                         property bool isSelected: menuListView.currentIndex === index
 
                         background: Rectangle {
@@ -102,16 +99,15 @@ ApplicationWindow {
                         }
 
 
-                        RowLayout {
+                        ColumnLayout {
                             anchors.fill: parent
                             spacing: 0
 
                             Image {
                                 source: iconSource
-                                width: 32
-                                height: 32
-                                Layout.preferredWidth: 32
-                                Layout.preferredHeight: 32
+                                Layout.preferredWidth: 48
+                                Layout.preferredHeight: 48
+                                Layout.alignment: Qt.AlignHCenter
                             }
 
                             Text {
@@ -119,8 +115,7 @@ ApplicationWindow {
                                 text: mytext
                                 font.pixelSize: 18
                                 color: "white"
-                                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignHCenter
                             }
                         }
 
@@ -141,14 +136,21 @@ ApplicationWindow {
                     anchors.fill: parent
                     initialItem:Loader{
                         id:settingsLoader
-                        sourceComponent: rfidPage
+                        sourceComponent: homePage
                         onLoaded: pageStackView
                     }
+                }
+                Image {
+                    id: bgImg
+                    source: "qrc:/Resource/srcPage/bk_flower.jpg"
+                    anchors.fill: parent
+                    opacity: 0.1
                 }
             }
         }
     }
 
+    Component{id:homePage; HomePage{}}
     Component{id:rfidPage; RfidPage{}}
     Component{id:gpsPage; GpsPage{}}
     Component{id:ledPage; LedPage{}}
@@ -157,9 +159,12 @@ ApplicationWindow {
     function switchPage(index){
         switch(index){
         case 0:
-            settingsLoader.sourceComponent = rfidPage
+            settingsLoader.sourceComponent = homePage
             break;
         case 1:
+            settingsLoader.sourceComponent = rfidPage
+            break;
+        case 2:
             settingsLoader.sourceComponent = gpsPage
             break;
         case 5:
@@ -168,6 +173,69 @@ ApplicationWindow {
         case 7:
             settingsLoader.sourceComponent = keyboardPage
             break;
+        }
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        z: -1
+        onClicked: {
+            clickShow.brust(mouse.x, mouse.y, mouse.button)
+        }
+    }
+
+    Item {
+        id: clickShow
+        z: 1
+        Component {
+            id: brushComp
+            Item {
+                id: circleItem
+                property color circleColor
+                property real radius: 0
+                Rectangle {
+                    id: circle
+                    anchors.centerIn: parent
+                    color: "transparent"
+                    width: radius * 2
+                    height: radius * 2
+                    opacity: 0
+                    visible: opacity > 0
+                    border.color: circleItem.circleColor
+                    border.width: 4
+                }
+                SequentialAnimation {
+                    id: animation
+                    running: true
+                    loops: 1
+                    ParallelAnimation {
+                        NumberAnimation {
+                            target: circle
+                            property: "radius"
+                            from: 1
+                            to: 60
+                            duration: 400
+                        }
+                        NumberAnimation {
+                            target: circle
+                            property: "opacity"
+                            from: 1
+                            to: 0
+                            duration: 400
+                        }
+                    }
+                    ScriptAction {
+                        script: {
+                            circleItem.destroy()
+                        }
+                    }
+                }
+            }
+        }
+
+        function brust(xPos, yPos, button) {
+            brushComp.createObject(clickShow, {x: xPos, y: yPos, circleColor: "dodgerblue"});
         }
     }
 }

@@ -1,26 +1,27 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id:headerroot
     Layout.fillWidth: true
     height: 100
+
     RowLayout {
         anchors.fill: parent
         spacing: 0
-        ShaderEffect {
+        //渐变色
+        LinearGradient {            ///--[Mark]
             anchors.fill: parent
-            fragmentShader: "
-                uniform lowp float qt_Opacity;
-                varying highp vec2 qt_TexCoord0;
-                uniform lowp vec4 color1;
-                uniform lowp vec4 color2;
-                void main() {
-                    gl_FragColor = mix(color1, color2, qt_TexCoord0.x) * qt_Opacity;
-                }"
-            property color color1: globalColor1  // 左侧颜色
-            property color color2: globalColor2  // 右侧颜色
+            start: Qt.point(0, 0)
+            end: Qt.point(width, 0)        ///1、横向渐变
+    //        end: Qt.point(0, height)     ///2、竖向渐变
+    //        end: Qt.point(width, height) ///3、横向渐变
+            gradient: Gradient {
+                GradientStop {  position: 0.0;    color: colorConfig.themeColor1 }
+                GradientStop {  position: 1.0;    color: colorConfig.themeColor2 }
+            }
         }
 
         //隐藏侧边栏按钮
@@ -87,6 +88,82 @@ Rectangle {
                             Layout.alignment: Qt.AlignHCenter
                         }
                     }
+
+                    onClicked: {
+                        skinBox.show()
+                    }
+                    CusPopup {
+                        id: skinBox
+                        barColor: "#f5f5f6"
+                        backgroundWidth: 270
+                        backgroundHeight: 180
+                        borderColor: "#cbcbcb"
+                        contentItem: GridView {
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            model: colorConfig.themes
+                            cellWidth: 80
+                            cellHeight: 80
+                            clip: true
+                            delegate: Item {
+                                width: 80
+                                height: 80
+                                Rectangle {
+                                    anchors.fill: parent
+                                    anchors.margins: 4
+                                    //color: model.themeColor1
+                                    //渐变色
+                                    LinearGradient {            ///--[Mark]
+                                        anchors.fill: parent
+                                        start: Qt.point(0, 0)
+                                        end: Qt.point(width, 0)        ///1、横向渐变
+                                //        end: Qt.point(0, height)     ///2、竖向渐变
+                                //        end: Qt.point(width, height) ///3、横向渐变
+                                        gradient: Gradient {
+                                            GradientStop {  position: 0.0;    color: model.themeColor1 }
+                                            GradientStop {  position: 1.0;    color: model.themeColor2 }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    anchors.fill: parent
+                                    color: "transparent"
+                                    border.color: model.themeColor1
+                                    border.width: 2
+                                    visible: a.containsMouse
+                                }
+                                Label {
+                                    anchors {
+                                        centerIn: parent
+                                    }
+                                    horizontalAlignment: Text.AlignHCenter
+                                    color: "white"
+                                    text: qsTr(model.name)
+                                }
+                                Rectangle {
+                                    x: parent.width - width
+                                    y: parent.height - height
+                                    width: 20
+                                    height: width
+                                    radius: width / 2
+                                    color: model.themeColor1
+                                    border.width: 3
+                                    //border.color: CusConfig.controlBorderColor
+                                    visible: colorConfig.currentTheme === index
+                                }
+                                MouseArea {
+                                    id: a
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        colorConfig.currentTheme = index
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                 }
                 //setting
                 Button {

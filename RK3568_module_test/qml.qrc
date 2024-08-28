@@ -39,5 +39,7 @@
         <file>Pages/HomePage.qml</file>
         <file>Resource/srcPage/bk_flower.jpg</file>
         <file>Resource/icon/help.png</file>
+        <file>Component/CusPopup.qml</file>
+        <file>Component/ColorConfig.qml</file>
     </qresource>
 </RCC>
